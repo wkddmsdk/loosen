@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#3b82f6" />
+<title>Loosen · 루슨</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%235b8bff'/%3E%3Cstop%20offset='1'%20stop-color='%232f6bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx='50'%20cy='50'%20r='50'%20fill='url(%23g)'/%3E%3Cpath%20d='M27%2039Q50%2027%2073%2039'%20fill='none'%20stroke='white'%20stroke-opacity='.55'%20stroke-width='7'%20stroke-linecap='round'/%3E%3Cpath%20d='M25%2052Q50%2039%2075%2052'%20fill='none'%20stroke='white'%20stroke-opacity='.78'%20stroke-width='7.5'%20stroke-linecap='round'/%3E%3Cpath%20d='M27%2066Q50%2053%2073%2066'%20fill='none'%20stroke='white'%20stroke-width='8'%20stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- 배경: 유리 굴절이 보이도록 은은한 파랑 blob -->
+<div class="bg-decor" aria-hidden="true">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+</div>
+
+<!-- ============ 로딩 화면 ============ -->
+<div id="loader" class="loader">
+  <div class="loader-logo">
+    <svg viewBox="0 0 100 100" class="logo-svg">
+      <defs>
+        <linearGradient id="lg-load" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#5b8bff"/>
+          <stop offset="1" stop-color="#2f6bff"/>
+        </linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="48" fill="url(#lg-load)"/>
+      <path class="wave w1" d="M27 39 Q50 27 73 39" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="7" stroke-linecap="round"/>
+      <path class="wave w2" d="M25 52 Q50 39 75 52" fill="none" stroke="rgba(255,255,255,.78)" stroke-width="7.5" stroke-linecap="round"/>
+      <path class="wave w3" d="M27 66 Q50 53 73 66" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="loader-name">Loosen</div>
+  <div class="loader-sub">지금, 뻐근한 곳을 풀어요</div>
+</div>
+
+<!-- ============ 앱 프레임 ============ -->
+<main class="app-frame" id="frame" hidden>
+
+  <!-- ① 홈 -->
+  <section class="screen" id="screen-home" data-tab="home">
+    <header class="home-head">
+      <div class="brand">
+        <svg viewBox="0 0 100 100" class="brand-logo">
+          <defs>
+            <linearGradient id="lg-home" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#5b8bff"/><stop offset="1" stop-color="#2f6bff"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="48" fill="url(#lg-home)"/>
+          <path d="M27 39 Q50 27 73 39" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M25 52 Q50 39 75 52" fill="none" stroke="rgba(255,255,255,.78)" stroke-width="7.5" stroke-linecap="round"/>
+          <path d="M27 66 Q50 53 73 66" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">Loosen</span>
+      </div>
+      <p class="greeting" id="greeting">안녕하세요 👋</p>
+      <h1 class="home-title">어디가 뻐근해?</h1>
+    </header>
+
+    <div class="parts-grid" id="partsGrid"><!-- JS 렌더 --></div>
+
+    <div class="streak-card glass" id="streakCard">
+      <div class="streak-flame">🔥</div>
+      <div class="streak-text">
+        <span class="streak-num" id="streakNum">0</span>
+        <span class="streak-label">일 연속 스트레칭 중</span>
+      </div>
+    </div>
+    <p class="safety-note">반동 없이 천천히, 통증 없는 편안한 범위 안에서 하세요.</p>
+  </section>
+
+  <!-- ② 루틴 상세 -->
+  <section class="screen" id="screen-routine" hidden>
+    <button class="back-btn" data-back="home">←</button>
+    <div class="routine-hero">
+      <div class="routine-icon" id="routineIcon"></div>
+      <h1 class="routine-title" id="routineTitle">목</h1>
+      <div class="routine-meta">
+        <span id="routineCount">3개 동작</span>
+        <span class="dot">·</span>
+        <span id="routineTime">약 1분 30초</span>
+      </div>
+    </div>
+    <ul class="move-list" id="moveList"><!-- JS 렌더 --></ul>
+    <p class="safety-note">숨을 편히 쉬면서, 늘어나는 느낌까지만. 아프면 멈추세요.</p>
+    <button class="btn-primary btn-lg" id="startBtn">
+      <span>시작하기</span>
+    </button>
+  </section>
+
+  <!-- ③ 운동 실행 -->
+  <section class="screen screen-exercise" id="screen-exercise" hidden>
+    <div class="ex-top">
+      <button class="ex-exit" id="exExit">나가기</button>
+      <div class="ex-progress" id="exProgress">1 / 3</div>
+    </div>
+
+    <div class="ex-image glass" id="exImage">
+      <!-- 동작 이미지 자리 (나중에 삽입) -->
+      <span class="ex-image-ph">🧘</span>
+    </div>
+
+    <div class="ring-wrap">
+      <svg class="ring" viewBox="0 0 120 120">
+        <circle class="ring-bg" cx="60" cy="60" r="52"/>
+        <circle class="ring-fg" id="ringFg" cx="60" cy="60" r="52"/>
+      </svg>
+      <div class="ring-time" id="ringTime">30</div>
+    </div>
+
+    <h2 class="ex-name" id="exName">동작 이름</h2>
+    <p class="ex-desc" id="exDesc">동작 설명</p>
+
+    <div class="ex-next glass" id="exNext">
+      <span class="ex-next-label">다음</span>
+      <span class="ex-next-name" id="exNextName">-</span>
+    </div>
+
+    <div class="ex-controls">
+      <button class="ctrl-btn" id="btnPause">⏸ 일시정지</button>
+      <button class="ctrl-btn" id="btnSkip">건너뛰기 ⏭</button>
+    </div>
+  </section>
+
+  <!-- ④ 완료 -->
+  <section class="screen screen-complete" id="screen-complete" hidden>
+    <div class="celebrate">
+      <div class="celebrate-logo">
+        <svg viewBox="0 0 100 100" class="logo-svg pop">
+          <defs>
+            <linearGradient id="lg-done" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#5b8bff"/><stop offset="1" stop-color="#2f6bff"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="48" fill="url(#lg-done)"/>
+          <path d="M32 51 l12 12 l24 -26" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 class="complete-title">오늘도 해냈어! 🎉</h1>
+      <p class="complete-sub" id="completeSub">몸이 한결 가벼워졌을 거예요.</p>
+      <div class="complete-stats">
+        <div class="cstat glass"><span class="cstat-num" id="doneTime">0초</span><span class="cstat-label">채운 시간</span></div>
+        <div class="cstat glass"><span class="cstat-num" id="doneMoves">0</span><span class="cstat-label">완료 동작</span></div>
+      </div>
+      <button class="btn-primary btn-lg" id="homeBtn"><span>홈으로</span></button>
+    </div>
+  </section>
+
+  <!-- ⑤ 기록 -->
+  <section class="screen" id="screen-records" data-tab="records" hidden>
+    <header class="page-head">
+      <h1 class="page-title">기록</h1>
+      <p class="page-desc">꾸준함이 쌓이는 중이에요.</p>
+    </header>
+
+    <div class="stat-row">
+      <div class="stat-card glass"><span class="stat-num" id="stStreak">0</span><span class="stat-label">연속 일수</span></div>
+      <div class="stat-card glass"><span class="stat-num" id="stSessions">0</span><span class="stat-label">총 완료</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card glass"><span class="stat-num" id="stWeek">0분</span><span class="stat-label">이번 주 누적</span></div>
+      <div class="stat-card glass"><span class="stat-num" id="stMonth">0분</span><span class="stat-label">이번 달 누적</span></div>
+    </div>
+
+    <div class="cal-card glass">
+      <div class="cal-head">
+        <span id="calMonth">2026년 7월</span>
+      </div>
+      <div class="cal-dow"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+      <div class="cal-grid" id="calGrid"><!-- JS --></div>
+    </div>
+
+    <div class="top-part glass" id="topPartCard">
+      <span class="top-part-label">가장 많이 푼 부위</span>
+      <span class="top-part-val" id="topPartVal">아직 없어요</span>
+    </div>
+  </section>
+
+  <!-- ⑥ 설정 -->
+  <section class="screen" id="screen-settings" data-tab="settings" hidden>
+    <header class="page-head">
+      <h1 class="page-title">설정</h1>
+      <p class="page-desc">나에게 맞게 조절하세요.</p>
+    </header>
+
+    <div class="setting-group glass">
+      <div class="setting-row">
+        <div><div class="setting-name">알림 시간</div><div class="setting-hint">매일 이 시간에 스트레칭을 떠올려요</div></div>
+        <input type="time" id="notifyTime" class="time-input" value="14:00" />
+      </div>
+    </div>
+
+    <div class="setting-group glass">
+      <div class="setting-row">
+        <div><div class="setting-name">기록 초기화</div><div class="setting-hint">모든 스트릭과 기록을 지워요</div></div>
+        <button class="btn-danger" id="resetBtn">초기화</button>
+      </div>
+    </div>
+
+    <div class="setting-group glass about">
+      <div class="about-logo">
+        <svg viewBox="0 0 100 100" class="brand-logo">
+          <defs><linearGradient id="lg-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b8bff"/><stop offset="1" stop-color="#2f6bff"/></linearGradient></defs>
+          <circle cx="50" cy="50" r="48" fill="url(#lg-about)"/>
+          <path d="M27 39 Q50 27 73 39" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M25 52 Q50 39 75 52" fill="none" stroke="rgba(255,255,255,.78)" stroke-width="7.5" stroke-linecap="round"/>
+          <path d="M27 66 Q50 53 73 66" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="about-name">Loosen · 루슨</div>
+      <div class="about-ver">오래 앉아 있는 당신을 위한 부위별 스트레칭 · v1.0</div>
+    </div>
+  </section>
+
+  <!-- 하단 탭바 -->
+  <nav class="tabbar" id="tabbar">
+    <button class="tab" data-go="home">
+      <svg viewBox="0 0 24 24" class="tab-ico"><path d="M4 11 12 4l8 7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9h12v-9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>홈</span>
+    </button>
+    <button class="tab" data-go="records">
+      <svg viewBox="0 0 24 24" class="tab-ico"><rect x="4" y="5" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4 9h16M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span>기록</span>
+    </button>
+    <button class="tab" data-go="settings">
+      <svg viewBox="0 0 24 24" class="tab-ico"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span>설정</span>
+    </button>
+  </nav>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
