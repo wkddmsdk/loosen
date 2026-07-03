@@ -174,6 +174,34 @@ strong { font-weight: 700; color: var(--orange-deep); }
 .vital__value em { font-size: 1rem; font-weight: 600; color: var(--muted); margin-left: 4px; font-style: normal; }
 .vital__ecg { flex: 1; height: 48px; opacity: .85; }
 .vital__ecg svg { width: 100%; height: 100%; }
+
+/* 히어로 카드 배경 영상 (videos/hero-card.mp4 없으면 그라데이션으로 대체) */
+.hero__card--video { position: relative; }
+.hero__card-media {
+  position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(150deg, var(--orange-deep), var(--orange) 55%, #FDAB73);
+}
+.hero__card-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero__card-video.is-missing { display: none; }
+.hero__card-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(190deg, rgba(20,10,6,.12) 0%, rgba(20,10,6,.5) 60%, rgba(20,10,6,.78) 100%);
+}
+.hero__card-content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+.hero__card--video .eyebrow {
+  color: #fff; background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.32);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.hero__card--video .hero__title { background: none; -webkit-text-fill-color: #fff; color: #fff; filter: drop-shadow(0 8px 20px rgba(0,0,0,.35)); }
+.hero__card--video .hero__sub { color: #fff; }
+.hero__card--video .hero__desc { color: rgba(255,255,255,.82); }
+.hero__card--video .hero__desc strong { color: var(--yellow); }
+.hero__card--video .btn--ghost { color: #fff; background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.4); }
+.hero__card--video .btn--ghost:hover { background: rgba(255,255,255,.24); }
+.hero__card--video .vital__label { color: rgba(255,255,255,.65); }
+.hero__card--video .vital__value { color: #fff; }
+.hero__card--video .vital__value em { color: rgba(255,255,255,.65); }
+.hero__card--video .ecg-line { stroke: var(--yellow); filter: drop-shadow(0 0 4px rgba(232,185,63,.55)); }
 .ecg-line {
   fill: none; stroke: var(--orange); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 600; stroke-dashoffset: 600; animation: ecg-draw 3.2s linear infinite;
@@ -456,31 +484,42 @@ strong { font-weight: 700; color: var(--orange-deep); }
     <!-- ===================== 히어로 ===================== -->
     <section class="hero" id="hero">
       <div class="hero__grid">
-        <div class="glass hero__card reveal">
-          <span class="eyebrow">K9 GUARD · POLICE DOG CARE SYSTEM</span>
-          <h1 class="hero__title">VELO</h1>
-          <p class="hero__sub">생체 신호 기반 경찰견 모니터링<br />및 AI 케어 시스템</p>
-          <p class="hero__desc">
-            경찰견의 생체신호를 실시간으로 분석해 위험을 조기에 감지하고,
-            스마트 하네스·AI·케어 로봇·앱을 하나로 <strong>연결(Link)</strong>해
-            조련사의 임무 수행을 지원합니다.
-          </p>
-
-          <div class="hero__actions">
-            <a href="#products" class="btn btn--primary">제품 알아보기</a>
-            <a href="#overview" class="btn btn--ghost">시스템 개요</a>
+        <div class="glass hero__card hero__card--video reveal">
+          <!-- 배경 영상: videos/hero-card.mp4 를 넣으면 자동 재생됩니다 (없으면 주황 그라데이션으로 대체) -->
+          <div class="hero__card-media" aria-hidden="true">
+            <video class="hero__card-video" autoplay muted loop playsinline
+                   onerror="this.classList.add('is-missing')">
+              <source src="videos/hero-card.mp4" type="video/mp4" />
+            </video>
+            <div class="hero__card-scrim"></div>
           </div>
 
-          <!-- 실시간 더미 심박수 -->
-          <div class="hero__vitals" aria-hidden="true">
-            <div class="vital">
-              <span class="vital__label">HEART RATE</span>
-              <span class="vital__value"><span id="bpm">92</span><em>bpm</em></span>
+          <div class="hero__card-content">
+            <span class="eyebrow">K9 GUARD · POLICE DOG CARE SYSTEM</span>
+            <h1 class="hero__title">VELO</h1>
+            <p class="hero__sub">생체 신호 기반 경찰견 모니터링<br />및 AI 케어 시스템</p>
+            <p class="hero__desc">
+              경찰견의 생체신호를 실시간으로 분석해 위험을 조기에 감지하고,
+              스마트 하네스·AI·케어 로봇·앱을 하나로 <strong>연결(Link)</strong>해
+              조련사의 임무 수행을 지원합니다.
+            </p>
+
+            <div class="hero__actions">
+              <a href="#products" class="btn btn--primary">제품 알아보기</a>
+              <a href="#overview" class="btn btn--ghost">시스템 개요</a>
             </div>
-            <div class="vital__ecg">
-              <svg viewBox="0 0 240 48" preserveAspectRatio="none" aria-hidden="true">
-                <path class="ecg-line" d="M0 24 H40 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H120 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H240" />
-              </svg>
+
+            <!-- 실시간 더미 심박수 -->
+            <div class="hero__vitals" aria-hidden="true">
+              <div class="vital">
+                <span class="vital__label">HEART RATE</span>
+                <span class="vital__value"><span id="bpm">92</span><em>bpm</em></span>
+              </div>
+              <div class="vital__ecg">
+                <svg viewBox="0 0 240 48" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="ecg-line" d="M0 24 H40 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H120 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H240" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -828,6 +867,9 @@ strong { font-weight: 700; color: var(--orange-deep); }
     } else if (pulse) {
       pulse.style.opacity = '1';
     }
+
+    var heroVideo = document.querySelector('.hero__card-video');
+    if (heroVideo && reduceMotion) { heroVideo.removeAttribute('autoplay'); heroVideo.pause(); }
 
     var bpmEl = document.getElementById('bpm');
     if (bpmEl && !reduceMotion) {
