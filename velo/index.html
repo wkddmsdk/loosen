@@ -155,8 +155,7 @@ strong { font-weight: 700; color: var(--orange-deep); }
 .btn--ghost:hover { transform: translateY(-3px); background: rgba(255,255,255,.75); }
 
 .hero { max-width: 1360px; margin: 0 auto; padding: 150px 40px 90px; }
-.hero__grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: stretch; }
-.hero__card { padding: 48px 44px; display: flex; flex-direction: column; }
+.hero__card { display: flex; flex-direction: column; min-height: 640px; }
 .hero__title {
   font-family: var(--font-en); font-weight: 800;
   font-size: clamp(4rem, 9vw, 7rem); line-height: .92; letter-spacing: -.04em;
@@ -187,7 +186,10 @@ strong { font-weight: 700; color: var(--orange-deep); }
   position: absolute; inset: 0;
   background: linear-gradient(190deg, rgba(20,10,6,.12) 0%, rgba(20,10,6,.5) 60%, rgba(20,10,6,.78) 100%);
 }
-.hero__card-content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+.hero__card-content {
+  position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column;
+  padding: 48px 44px; max-width: 640px;
+}
 .hero__card--video .eyebrow {
   color: #fff; background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.32);
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
@@ -209,41 +211,27 @@ strong { font-weight: 700; color: var(--orange-deep); }
 }
 @keyframes ecg-draw { to { stroke-dashoffset: -600; } }
 
-.hero__visual { display: flex; }
-.photo-slot {
-  position: relative; flex: 1; min-height: 460px; border-radius: var(--radius); overflow: hidden;
-  border: 1px solid var(--glass-brd); box-shadow: var(--glass-shadow);
-  background: linear-gradient(150deg, var(--orange-tint), #FBD5AE);
-}
-.photo-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-.photo-slot img.is-missing { display: none; }
-.photo-slot__fallback {
-  position: absolute; inset: 0; z-index: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  color: var(--orange-deep);
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255,255,255,.5), transparent 60%),
-    linear-gradient(150deg, var(--orange-tint), #F8C79C);
-}
-.photo-slot__fallback span { font-weight: 700; font-size: 1.05rem; }
-.photo-slot__fallback small { font-family: var(--font-en); font-size: .78rem; color: var(--orange); opacity: .8; }
-.photo-slot img:not(.is-missing) ~ .photo-slot__fallback { display: none; }
+/* 영상 위에 떠있는 라이브 배지 · 실시간 수치 (오른쪽 여백에 배치) */
 .live-badge {
-  position: absolute; top: 20px; left: 20px; z-index: 2;
+  position: absolute; top: 24px; right: 24px; z-index: 2;
   display: flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 100px;
-  font-family: var(--font-en); font-size: .82rem; font-weight: 600; color: var(--ink); background: rgba(255,255,255,.62);
+  font-family: var(--font-en); font-size: .82rem; font-weight: 600; color: #fff;
+  background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.3);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
 .live-badge .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 0 0 rgba(22,166,115,.5); animation: pulse-dot 2s infinite; }
 @keyframes pulse-dot { 0%{box-shadow:0 0 0 0 rgba(22,166,115,.5);} 70%{box-shadow:0 0 0 10px rgba(22,166,115,0);} 100%{box-shadow:0 0 0 0 rgba(22,166,115,0);} }
 .metric-chip {
-  position: absolute; z-index: 2; padding: 12px 16px; border-radius: var(--radius-sm);
-  display: flex; flex-direction: column; gap: 2px; background: rgba(255,255,255,.6);
+  position: absolute; right: 24px; z-index: 2; padding: 12px 16px; border-radius: var(--radius-sm);
+  display: flex; flex-direction: column; gap: 2px;
+  background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.3);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
-.metric-chip span { font-size: .74rem; color: var(--muted); font-weight: 600; }
-.metric-chip strong { font-family: var(--font-en); font-size: 1.25rem; color: var(--orange-deep); }
-.metric-chip--a { bottom: 22px; left: 20px; }
-.metric-chip--b { bottom: 22px; right: 20px; }
-.metric-chip--b strong { color: var(--emerald-deep); }
+.metric-chip span { font-size: .74rem; color: rgba(255,255,255,.7); font-weight: 600; }
+.metric-chip strong { font-family: var(--font-en); font-size: 1.25rem; color: #fff; }
+.metric-chip--a { bottom: 96px; }
+.metric-chip--b { bottom: 24px; }
+.metric-chip--b strong { color: var(--emerald); }
 
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .stat { padding: 30px 26px; text-align: left; }
@@ -384,8 +372,7 @@ strong { font-weight: 700; color: var(--orange-deep); }
 .js .reveal.is-visible { opacity: 1; transform: none; }
 
 @media (max-width: 1080px) {
-  .hero__grid { grid-template-columns: 1fr; }
-  .photo-slot { min-height: 360px; }
+  .hero__card { min-height: 560px; }
   .stats { grid-template-columns: repeat(2, 1fr); }
   .tech { grid-template-columns: 1fr; }
   .compare { grid-template-columns: 1fr; }
@@ -398,7 +385,9 @@ strong { font-weight: 700; color: var(--orange-deep); }
   .nav__menu { display: none; }
   .section { padding: 70px 20px; }
   .hero { padding: 130px 20px 60px; }
-  .hero__card { padding: 34px 26px; }
+  .hero__card-content { padding: 34px 26px; max-width: none; }
+  .metric-chip { display: none; }
+  .live-badge { position: static; align-self: flex-start; margin: 24px 24px 0; }
   .products { grid-template-columns: 1fr; }
   .stats { grid-template-columns: 1fr 1fr; }
   .problem__list { grid-template-columns: 1fr; }
@@ -483,70 +472,54 @@ strong { font-weight: 700; color: var(--orange-deep); }
 
     <!-- ===================== 히어로 ===================== -->
     <section class="hero" id="hero">
-      <div class="hero__grid">
-        <div class="glass hero__card hero__card--video reveal">
-          <!-- 배경 영상: videos/hero-card.mp4 를 넣으면 자동 재생됩니다 (없으면 주황 그라데이션으로 대체) -->
-          <div class="hero__card-media" aria-hidden="true">
-            <video class="hero__card-video" autoplay muted loop playsinline
-                   onerror="this.classList.add('is-missing')">
-              <source src="videos/hero-card.mp4" type="video/mp4" />
-            </video>
-            <div class="hero__card-scrim"></div>
-          </div>
-
-          <div class="hero__card-content">
-            <span class="eyebrow">K9 GUARD · POLICE DOG CARE SYSTEM</span>
-            <h1 class="hero__title">VELO</h1>
-            <p class="hero__sub">생체 신호 기반 경찰견 모니터링<br />및 AI 케어 시스템</p>
-            <p class="hero__desc">
-              경찰견의 생체신호를 실시간으로 분석해 위험을 조기에 감지하고,
-              스마트 하네스·AI·케어 로봇·앱을 하나로 <strong>연결(Link)</strong>해
-              조련사의 임무 수행을 지원합니다.
-            </p>
-
-            <div class="hero__actions">
-              <a href="#products" class="btn btn--primary">제품 알아보기</a>
-              <a href="#overview" class="btn btn--ghost">시스템 개요</a>
-            </div>
-
-            <!-- 실시간 더미 심박수 -->
-            <div class="hero__vitals" aria-hidden="true">
-              <div class="vital">
-                <span class="vital__label">HEART RATE</span>
-                <span class="vital__value"><span id="bpm">92</span><em>bpm</em></span>
-              </div>
-              <div class="vital__ecg">
-                <svg viewBox="0 0 240 48" preserveAspectRatio="none" aria-hidden="true">
-                  <path class="ecg-line" d="M0 24 H40 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H120 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H240" />
-                </svg>
-              </div>
-            </div>
-          </div>
+      <div class="glass hero__card hero__card--video reveal">
+        <!-- 배경 영상: videos/hero-card.mp4 를 넣으면 자동 재생됩니다 (없으면 주황 그라데이션으로 대체) -->
+        <div class="hero__card-media" aria-hidden="true">
+          <video class="hero__card-video" autoplay muted loop playsinline
+                 onerror="this.classList.add('is-missing')">
+            <source src="videos/hero-card.mp4" type="video/mp4" />
+          </video>
+          <div class="hero__card-scrim"></div>
         </div>
 
-        <!-- 히어로 비주얼: 경찰견 사진 슬롯 -->
-        <div class="hero__visual reveal">
-          <!-- 활동적인 경찰견 사진 넣기: images/dog-hero.jpg (없으면 그린 틴트 fallback) -->
-          <figure class="photo-slot">
-            <img src="images/dog-hero.jpg" alt="고강도 임무를 수행하는 활동적인 경찰견"
-                 onerror="this.classList.add('is-missing')" />
-            <figcaption class="photo-slot__fallback">
-              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-6 9 6v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21V13h6v8"/></svg>
-              <span>활동적인 경찰견 사진 넣기</span>
-              <small>images/dog-hero.jpg</small>
-            </figcaption>
+        <!-- 영상 위에 떠있는 라이브 배지 · 실시간 수치 -->
+        <div class="glass live-badge">
+          <span class="dot"></span> 실시간 모니터링 · ONLINE
+        </div>
+        <div class="glass metric-chip metric-chip--a">
+          <span>체온</span><strong>38.4°C</strong>
+        </div>
+        <div class="glass metric-chip metric-chip--b">
+          <span>활동량</span><strong>HIGH</strong>
+        </div>
 
-            <!-- 유리 위에 떠있는 라이브 배지 -->
-            <div class="glass live-badge">
-              <span class="dot"></span> 실시간 모니터링 · ONLINE
+        <div class="hero__card-content">
+          <span class="eyebrow">K9 GUARD · POLICE DOG CARE SYSTEM</span>
+          <h1 class="hero__title">VELO</h1>
+          <p class="hero__sub">생체 신호 기반 경찰견 모니터링<br />및 AI 케어 시스템</p>
+          <p class="hero__desc">
+            경찰견의 생체신호를 실시간으로 분석해 위험을 조기에 감지하고,
+            스마트 하네스·AI·케어 로봇·앱을 하나로 <strong>연결(Link)</strong>해
+            조련사의 임무 수행을 지원합니다.
+          </p>
+
+          <div class="hero__actions">
+            <a href="#products" class="btn btn--primary">제품 알아보기</a>
+            <a href="#overview" class="btn btn--ghost">시스템 개요</a>
+          </div>
+
+          <!-- 실시간 더미 심박수 -->
+          <div class="hero__vitals" aria-hidden="true">
+            <div class="vital">
+              <span class="vital__label">HEART RATE</span>
+              <span class="vital__value"><span id="bpm">92</span><em>bpm</em></span>
             </div>
-            <div class="glass metric-chip metric-chip--a">
-              <span>체온</span><strong>38.4°C</strong>
+            <div class="vital__ecg">
+              <svg viewBox="0 0 240 48" preserveAspectRatio="none" aria-hidden="true">
+                <path class="ecg-line" d="M0 24 H40 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H120 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H240" />
+              </svg>
             </div>
-            <div class="glass metric-chip metric-chip--b">
-              <span>활동량</span><strong>HIGH</strong>
-            </div>
-          </figure>
+          </div>
         </div>
       </div>
     </section>
