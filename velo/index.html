@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VELO · K9 Guard — 생체 신호 기반 경찰견 AI 케어 시스템</title>
+  <meta name="description" content="VELO(Vital Emergency Link Operator) — 경찰견의 생체신호를 실시간 분석해 위험을 조기 감지하고, 스마트 하네스·AI 케어 로봇·앱을 하나로 연결하는 AI 통합 케어 플랫폼." />
+
+  <!-- 스타일을 파일에 직접 내장 → 어떤 환경(로컬 파일/미리보기/Netlify)에서도 항상 적용됨.
+       (동일 내용이 style.css 에도 있음 — 분리형이 필요하면 그 파일을 사용) -->
+  <style>
+/* ============================================================
+   VELO · K9 Guard — Glassmorphism Health-Tech
+   ============================================================ */
+:root {
+  /* 대표 색상: 주황 (VELO 로고 팔레트) */
+  --orange:        #F2660D;
+  --orange-deep:   #C2440A;
+  --orange-tint:   #FDEEE0;
+  /* 보조 색상: 옐로우 · 타우프 · 에메랄드 */
+  --yellow:        #FBE79A;
+  --yellow-deep:   #E8B93F;
+  --taupe:         #AFA093;
+  --taupe-deep:    #877A6D;
+  --emerald:       #16A673;
+  --emerald-deep:  #0C7C55;
+  --emerald-tint:  #DFF5EC;
+  --ink:          #1E1712;
+  --muted:        #8F8478;
+  --bg:           #FDF7F4;
+  --warm-red:     #E0574B;
+  --glass-bg:     rgba(255, 255, 255, 0.55);
+  --glass-bg-2:   rgba(255, 255, 255, 0.40);
+  --glass-brd:    rgba(255, 255, 255, 0.60);
+  --glass-shadow: 0 20px 50px -20px rgba(110, 50, 35, 0.28);
+  --glass-shadow-hi: 0 32px 70px -24px rgba(110, 50, 35, 0.40);
+  --font-ko: 'Pretendard', system-ui, -apple-system, sans-serif;
+  --font-en: 'Sora', 'Pretendard', system-ui, sans-serif;
+  --maxw: 1200px;
+  --radius: 24px;
+  --radius-sm: 16px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+body {
+  font-family: var(--font-ko); color: var(--ink); background: var(--bg);
+  line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+img { display: block; max-width: 100%; }
+strong { font-weight: 700; color: var(--orange-deep); }
+
+.bg-decor {
+  position: fixed; inset: 0; z-index: -1; overflow: hidden;
+  background:
+    radial-gradient(1200px 700px at 78% -10%, rgba(242,102,13,0.14), transparent 60%),
+    radial-gradient(900px 600px at 8% 12%, rgba(242,102,13,0.10), transparent 55%),
+    linear-gradient(180deg, #FEFAF7 0%, var(--bg) 40%, #FBEDE7 100%);
+}
+.orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .5; }
+.orb--1 { width: 420px; height: 420px; top: -80px; right: -60px;
+  background: radial-gradient(circle, rgba(242,102,13,.35), transparent 70%); }
+.orb--2 { width: 360px; height: 360px; top: 40%; left: -120px;
+  background: radial-gradient(circle, rgba(194,68,10,.28), transparent 70%); }
+.orb--3 { width: 300px; height: 300px; bottom: -60px; right: 20%;
+  background: radial-gradient(circle, rgba(251,231,224,.9), transparent 70%); }
+.grid-overlay {
+  position: absolute; inset: 0; opacity: .35;
+  background-image:
+    linear-gradient(rgba(30,23,18,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,23,18,.03) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 30%, transparent 100%);
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 30%, transparent 100%);
+}
+
+.glass {
+  background: var(--glass-bg); border: 1px solid var(--glass-brd); border-radius: var(--radius);
+  -webkit-backdrop-filter: blur(20px) saturate(140%); backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,.7);
+  position: relative; overflow: hidden;
+}
+.glass::before {
+  content: ""; position: absolute; top: 0; left: -30%; width: 60%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: skewX(-18deg) translateX(-40%);
+  opacity: 0; transition: opacity .5s var(--ease), transform .9s var(--ease); pointer-events: none;
+}
+.hero__card, .stat, .product, .flow__step, .compare__col, .tech__card, .problem__card {
+  transition: transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+.stat:hover, .product:hover, .flow__step:hover, .compare__col:hover, .tech__card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--glass-shadow-hi), inset 0 1px 0 rgba(255,255,255,.8);
+}
+.stat:hover::before, .product:hover::before, .flow__step:hover::before,
+.compare__col:hover::before, .tech__card:hover::before {
+  opacity: 1; transform: skewX(-18deg) translateX(180%);
+}
+
+.eyebrow {
+  display: inline-block; font-family: var(--font-en);
+  font-size: .78rem; font-weight: 600; letter-spacing: .18em; color: var(--orange-deep);
+  padding: 6px 12px; border-radius: 100px;
+  background: rgba(242,102,13,.12); border: 1px solid rgba(242,102,13,.22); margin-bottom: 18px;
+}
+.eyebrow--warn { color: var(--warm-red); background: rgba(224,87,75,.10); border-color: rgba(224,87,75,.24); }
+.section { max-width: var(--maxw); margin: 0 auto; padding: 100px 40px; }
+.section__head { max-width: 760px; margin: 0 auto 56px; text-align: center; }
+.section__title { font-size: clamp(1.9rem, 3.4vw, 2.75rem); line-height: 1.2; letter-spacing: -.02em; font-weight: 800; }
+.section__lead { margin-top: 18px; font-size: 1.08rem; color: var(--muted); }
+
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 16px 40px; transition: padding .3s var(--ease); }
+.nav__inner {
+  max-width: 1360px; margin: 0 auto; display: flex; align-items: center; gap: 28px;
+  padding: 12px 22px; border-radius: 100px;
+  background: rgba(255,255,255,.42); border: 1px solid rgba(255,255,255,.5);
+  -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 8px 30px -14px rgba(110,50,35,.20);
+  transition: background .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
+}
+.nav.is-scrolled .nav__inner {
+  background: rgba(255,255,255,.72); border-color: rgba(255,255,255,.85);
+  box-shadow: 0 12px 40px -16px rgba(110,50,35,.34);
+}
+.brand { display: flex; align-items: center; gap: 9px; color: var(--orange); }
+.brand__mark { flex: none; }
+.brand__word { font-family: var(--font-en); font-weight: 800; font-size: 1.4rem; letter-spacing: -.01em; color: var(--ink); }
+.brand__logo { height: 30px; width: auto; display: block; color: var(--orange); }
+.footer__brand .brand__logo { height: 32px; }
+.nav__menu { display: flex; gap: 6px; margin-left: 8px; }
+.nav__menu a { font-size: .95rem; font-weight: 500; color: var(--ink); padding: 8px 14px; border-radius: 100px; transition: background .2s, color .2s; }
+.nav__menu a:hover { background: rgba(242,102,13,.12); color: var(--orange-deep); }
+.nav__cta {
+  margin-left: auto; font-family: var(--font-en); font-weight: 600; font-size: .9rem;
+  padding: 10px 20px; border-radius: 100px; color: #fff;
+  background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  box-shadow: 0 8px 20px -8px rgba(194,68,10,.6);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.nav__cta:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -10px rgba(194,68,10,.7); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-en); font-weight: 600; font-size: .98rem;
+  padding: 14px 26px; border-radius: 100px;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s; cursor: pointer;
+}
+.btn--primary { color: #fff; background: linear-gradient(135deg, var(--orange), var(--orange-deep)); box-shadow: 0 12px 26px -10px rgba(194,68,10,.65); }
+.btn--primary:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -12px rgba(194,68,10,.75); }
+.btn--ghost { color: var(--orange-deep); background: rgba(255,255,255,.5); border: 1px solid rgba(242,102,13,.3); }
+.btn--ghost:hover { transform: translateY(-3px); background: rgba(255,255,255,.75); }
+
+.hero { max-width: 1360px; margin: 0 auto; padding: 150px 40px 90px; }
+.hero__grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: stretch; }
+.hero__card { padding: 48px 44px; display: flex; flex-direction: column; }
+.hero__title {
+  font-family: var(--font-en); font-weight: 800;
+  font-size: clamp(4rem, 9vw, 7rem); line-height: .92; letter-spacing: -.04em;
+  background: linear-gradient(135deg, var(--orange-deep), var(--orange) 60%, #FDAB73);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  margin: 6px 0 14px;
+}
+.hero__sub { font-size: clamp(1.25rem, 2.4vw, 1.75rem); font-weight: 700; line-height: 1.3; letter-spacing: -.01em; }
+.hero__desc { margin-top: 18px; font-size: 1.05rem; color: var(--muted); max-width: 46ch; }
+.hero__actions { display: flex; gap: 12px; margin-top: 30px; }
+.hero__vitals { margin-top: auto; padding-top: 30px; display: flex; align-items: center; gap: 24px; }
+.vital { flex: none; }
+.vital__label { display: block; font-family: var(--font-en); font-size: .72rem; letter-spacing: .16em; color: var(--muted); font-weight: 600; }
+.vital__value { font-family: var(--font-en); font-weight: 800; font-size: 2.6rem; line-height: 1; color: var(--orange-deep); }
+.vital__value em { font-size: 1rem; font-weight: 600; color: var(--muted); margin-left: 4px; font-style: normal; }
+.vital__ecg { flex: 1; height: 48px; opacity: .85; }
+.vital__ecg svg { width: 100%; height: 100%; }
+.ecg-line {
+  fill: none; stroke: var(--orange); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 600; stroke-dashoffset: 600; animation: ecg-draw 3.2s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(242,102,13,.4));
+}
+@keyframes ecg-draw { to { stroke-dashoffset: -600; } }
+
+.hero__visual { display: flex; }
+.photo-slot {
+  position: relative; flex: 1; min-height: 460px; border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--glass-brd); box-shadow: var(--glass-shadow);
+  background: linear-gradient(150deg, var(--orange-tint), #FBD5AE);
+}
+.photo-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.photo-slot img.is-missing { display: none; }
+.photo-slot__fallback {
+  position: absolute; inset: 0; z-index: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  color: var(--orange-deep);
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.5), transparent 60%),
+    linear-gradient(150deg, var(--orange-tint), #F8C79C);
+}
+.photo-slot__fallback span { font-weight: 700; font-size: 1.05rem; }
+.photo-slot__fallback small { font-family: var(--font-en); font-size: .78rem; color: var(--orange); opacity: .8; }
+.photo-slot img:not(.is-missing) ~ .photo-slot__fallback { display: none; }
+.live-badge {
+  position: absolute; top: 20px; left: 20px; z-index: 2;
+  display: flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 100px;
+  font-family: var(--font-en); font-size: .82rem; font-weight: 600; color: var(--ink); background: rgba(255,255,255,.62);
+}
+.live-badge .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 0 0 rgba(22,166,115,.5); animation: pulse-dot 2s infinite; }
+@keyframes pulse-dot { 0%{box-shadow:0 0 0 0 rgba(22,166,115,.5);} 70%{box-shadow:0 0 0 10px rgba(22,166,115,0);} 100%{box-shadow:0 0 0 0 rgba(22,166,115,0);} }
+.metric-chip {
+  position: absolute; z-index: 2; padding: 12px 16px; border-radius: var(--radius-sm);
+  display: flex; flex-direction: column; gap: 2px; background: rgba(255,255,255,.6);
+}
+.metric-chip span { font-size: .74rem; color: var(--muted); font-weight: 600; }
+.metric-chip strong { font-family: var(--font-en); font-size: 1.25rem; color: var(--orange-deep); }
+.metric-chip--a { bottom: 22px; left: 20px; }
+.metric-chip--b { bottom: 22px; right: 20px; }
+.metric-chip--b strong { color: var(--emerald-deep); }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.stat { padding: 30px 26px; text-align: left; }
+.stat__num { display: block; font-family: var(--font-en); font-weight: 800; font-size: 2.9rem; line-height: 1; color: var(--orange-deep); letter-spacing: -.02em; }
+.stat__num em { font-size: 1.4rem; font-style: normal; color: var(--yellow-deep); }
+.stat__label { display: block; margin-top: 12px; font-size: .95rem; color: var(--muted); }
+
+.problem { max-width: 1000px; }
+.problem__card { padding: 56px 54px; text-align: left; }
+.problem__title { font-size: clamp(1.8rem, 3.2vw, 2.6rem); font-weight: 800; line-height: 1.28; letter-spacing: -.02em; margin-top: 4px; }
+.problem__title .hl { background: linear-gradient(180deg, transparent 62%, rgba(224,87,75,.28) 62%); padding: 0 2px; }
+.problem__text { margin-top: 22px; font-size: 1.12rem; color: #3A2C26; max-width: 62ch; }
+.problem__list { margin-top: 30px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.problem__list li {
+  display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-radius: var(--radius-sm);
+  background: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.6); font-weight: 600; font-size: .96rem;
+}
+.problem__list .x {
+  font-family: var(--font-en); font-weight: 700; font-size: .85rem; color: var(--warm-red); background: rgba(224,87,75,.12);
+  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; flex: none;
+}
+
+.products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.product { display: flex; flex-direction: column; }
+.product__media { position: relative; padding: 22px; }
+.product__badge {
+  position: absolute; top: 22px; left: 22px; z-index: 2;
+  font-family: var(--font-en); font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+  color: var(--orange-deep); background: rgba(255,255,255,.7); padding: 6px 12px; border-radius: 100px;
+}
+.model-slot {
+  height: 220px; border-radius: var(--radius-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--orange-deep);
+  background:
+    radial-gradient(circle at 70% 20%, rgba(255,255,255,.6), transparent 55%),
+    linear-gradient(150deg, var(--orange-tint), #FAD1A8);
+  border: 1px dashed rgba(242,102,13,.4);
+}
+.model-slot span { font-weight: 700; font-size: .95rem; }
+.product__body { padding: 8px 30px 34px; }
+.product__name { font-size: 1.55rem; font-weight: 800; letter-spacing: -.01em; }
+.product__tag { font-family: var(--font-en); font-size: .84rem; color: var(--orange); font-weight: 600; margin-top: 4px; }
+.product__desc { margin-top: 14px; font-size: 1.02rem; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.chips li {
+  font-size: .85rem; font-weight: 600; color: var(--orange-deep); padding: 7px 13px; border-radius: 100px;
+  background: rgba(242,102,13,.12); border: 1px solid rgba(242,102,13,.2);
+}
+
+/* PRODUCT 02 · AI 케어 모듈은 에메랄드 톤으로 구분 */
+.product--care .product__badge { color: var(--emerald-deep); }
+.product--care .model-slot {
+  color: var(--emerald-deep);
+  background:
+    radial-gradient(circle at 70% 20%, rgba(255,255,255,.6), transparent 55%),
+    linear-gradient(150deg, var(--emerald-tint), #BFE9D6);
+  border: 1px dashed rgba(22,166,115,.4);
+}
+.product--care .product__tag { color: var(--emerald); }
+.product--care .chips li {
+  color: var(--emerald-deep); background: rgba(22,166,115,.12); border: 1px solid rgba(22,166,115,.2);
+}
+
+.flow__steps { display: flex; align-items: stretch; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.flow__step { flex: 1; min-width: 210px; padding: 30px 24px; text-align: left; }
+.flow__num { font-family: var(--font-en); font-weight: 800; font-size: 1rem; color: var(--orange); opacity: .7; }
+.flow__icon {
+  width: 52px; height: 52px; margin: 14px 0 16px; border-radius: 14px; display: grid; place-items: center; color: #fff;
+  background: linear-gradient(135deg, var(--orange), var(--orange-deep)); box-shadow: 0 10px 22px -10px rgba(194,68,10,.6);
+}
+.flow__step h3 { font-size: 1.2rem; font-weight: 700; }
+.flow__step p { margin-top: 8px; font-size: .94rem; color: var(--muted); }
+.flow__arrow { display: flex; align-items: center; font-family: var(--font-en); font-size: 1.6rem; color: var(--orange); opacity: .55; padding: 0 4px; }
+
+.compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; }
+.compare__col { padding: 40px 36px; }
+.compare__tag { display: inline-block; font-family: var(--font-en); font-size: .78rem; font-weight: 700; letter-spacing: .1em; padding: 6px 13px; border-radius: 100px; margin-bottom: 18px; }
+.compare__col--old { opacity: .92; }
+.compare__col--old .compare__tag { color: var(--muted); background: rgba(143,132,120,.14); }
+.compare__col--old h3 { font-size: 1.35rem; font-weight: 700; color: #4A3830; }
+.compare__col--old ul { margin-top: 18px; display: grid; gap: 10px; }
+.compare__col--old li { padding-left: 24px; position: relative; color: var(--muted); }
+.compare__col--old li::before { content: "—"; position: absolute; left: 0; color: var(--muted); }
+.compare__col--new {
+  border-color: rgba(242,102,13,.4);
+  background: linear-gradient(160deg, rgba(255,255,255,.62), rgba(251,231,224,.55));
+  box-shadow: 0 26px 60px -22px rgba(194,68,10,.4), inset 0 1px 0 rgba(255,255,255,.8);
+}
+.compare__col--new .compare__tag { color: #fff; background: linear-gradient(135deg, var(--orange), var(--orange-deep)); }
+.compare__col--new h3 { font-size: 1.5rem; font-weight: 800; color: var(--ink); }
+.compare__col--new ul { margin-top: 18px; display: grid; gap: 12px; }
+.compare__col--new li { padding-left: 28px; position: relative; font-weight: 500; }
+.compare__col--new li::before {
+  content: "✓"; position: absolute; left: 0; top: -1px; color: #fff; background: var(--orange);
+  width: 20px; height: 20px; border-radius: 6px; font-size: .75rem; display: grid; place-items: center; font-weight: 700;
+}
+.compare__vs {
+  font-family: var(--font-en); font-weight: 800; font-size: 1.1rem; color: var(--orange);
+  width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(255,255,255,.7); border: 1px solid var(--glass-brd); box-shadow: var(--glass-shadow);
+}
+
+.tech { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.tech__card { padding: 40px 40px; display: flex; align-items: center; gap: 28px; }
+.tech__num {
+  font-family: var(--font-en); font-weight: 800; font-size: 4.4rem; line-height: .9; letter-spacing: -.03em;
+  color: transparent; -webkit-text-stroke: 2px var(--orange); flex: none; opacity: .9;
+}
+.tech__kicker { font-family: var(--font-en); font-size: .76rem; font-weight: 600; letter-spacing: .12em; color: var(--orange); }
+.tech__card--alt .tech__num { -webkit-text-stroke: 2px var(--taupe-deep); }
+.tech__card--alt .tech__kicker { color: var(--taupe-deep); }
+.tech__body h3 { font-size: 1.3rem; font-weight: 800; margin-top: 6px; line-height: 1.3; }
+.tech__body p { margin-top: 10px; font-size: .96rem; color: var(--muted); }
+
+.footer { margin-top: 60px; padding: 70px 40px 34px; position: relative; }
+.footer::before { content: ""; position: absolute; top: 0; left: 5%; right: 5%; height: 1px; background: linear-gradient(90deg, transparent, rgba(242,102,13,.35), transparent); }
+.footer__inner { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 1.2fr 2fr; gap: 40px; }
+.footer__brand .brand { color: var(--orange); }
+.footer__desc { margin-top: 16px; color: var(--muted); font-size: .95rem; }
+.footer__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.footer__col h4 { font-size: .95rem; font-weight: 700; margin-bottom: 14px; }
+.footer__col a { display: block; color: var(--muted); font-size: .92rem; padding: 4px 0; transition: color .2s; }
+.footer__col a:hover { color: var(--orange-deep); }
+.footer__team { color: var(--muted); font-size: .92rem; }
+.footer__team small { color: var(--orange); opacity: .8; }
+.footer__bottom {
+  max-width: var(--maxw); margin: 40px auto 0; padding-top: 24px; border-top: 1px solid rgba(30,23,18,.08);
+  display: flex; justify-content: space-between; gap: 16px; font-size: .85rem; color: var(--muted); font-family: var(--font-en);
+}
+
+/* Reveal: 콘텐츠는 기본 노출, JS 있을 때만 숨겼다 등장 → 절대 빈 화면 안 됨 */
+.js .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.js .reveal.is-visible { opacity: 1; transform: none; }
+
+@media (max-width: 1080px) {
+  .hero__grid { grid-template-columns: 1fr; }
+  .photo-slot { min-height: 360px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .tech { grid-template-columns: 1fr; }
+  .compare { grid-template-columns: 1fr; }
+  .compare__vs { margin: 0 auto; }
+  .flow__arrow { display: none; }
+  .flow__steps { display: grid; grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .nav { padding: 12px 16px; }
+  .nav__menu { display: none; }
+  .section { padding: 70px 20px; }
+  .hero { padding: 130px 20px 60px; }
+  .hero__card { padding: 34px 26px; }
+  .products { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .problem__list { grid-template-columns: 1fr; }
+  .problem__card { padding: 36px 26px; }
+  .flow__steps { grid-template-columns: 1fr; }
+  .tech__card { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .footer__inner { grid-template-columns: 1fr; }
+  .footer__bottom { flex-direction: column; }
+  .hero__vitals { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .vital__ecg { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  .js .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .ecg-line { stroke-dashoffset: 0; animation: none; }
+}
+  </style>
+
+  <!-- 웹폰트는 렌더링을 막지 않게 비차단 로드 (실패해도 시스템 폰트로 안전하게 대체) -->
+  <!-- 한글: Pretendard / 영문 디스플레이: Sora -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.min.css"
+        media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap"
+        media="print" onload="this.media='all'" />
+  <noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" />
+  </noscript>
+</head>
+<body>
+
+  <!-- ===================== 배경 데코 ===================== -->
+  <div class="bg-decor" aria-hidden="true">
+    <div class="orb orb--1"></div>
+    <div class="orb orb--2"></div>
+    <div class="orb orb--3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- ===================== 네비게이션 ===================== -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#hero" class="brand" aria-label="VELO — K9 Guard 홈">
+        <!-- VELO 워드마크 로고: I/ELo + 라운드 스퀘어 도트 마크 -->
+        <svg class="brand__logo" viewBox="0 0 236 80" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- I -->
+          <rect x="6" y="13" width="13" height="56" rx="2"/>
+          <!-- / (V의 사선) -->
+          <path d="M25 69 L44 13 L57 13 L38 69 Z"/>
+          <!-- E -->
+          <rect x="64" y="13" width="13" height="56" rx="2"/>
+          <rect x="64" y="13" width="35" height="12" rx="2"/>
+          <rect x="64" y="35" width="29" height="12" rx="2"/>
+          <rect x="64" y="57" width="35" height="12" rx="2"/>
+          <!-- L -->
+          <rect x="108" y="13" width="13" height="56" rx="2"/>
+          <rect x="108" y="57" width="33" height="12" rx="2"/>
+          <!-- o (라운드 스퀘어 디스플레이) -->
+          <rect x="150" y="33" width="40" height="36" rx="12" fill="none" stroke="currentColor" stroke-width="12"/>
+          <!-- 도트 마크 (연결·케어) -->
+          <rect x="197" y="26" width="19" height="19" rx="5"/>
+          <rect x="212" y="41" width="16" height="16" rx="5"/>
+          <rect x="214" y="10" width="12" height="12" rx="4"/>
+        </svg>
+      </a>
+
+      <nav class="nav__menu" aria-label="주요 메뉴">
+        <a href="#overview">개요</a>
+        <a href="#problem">문제</a>
+        <a href="#products">제품</a>
+        <a href="#difference">차별점</a>
+        <a href="#tech">기술</a>
+      </nav>
+
+      <a href="#products" class="nav__cta">시스템 살펴보기</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===================== 히어로 ===================== -->
+    <section class="hero" id="hero">
+      <div class="hero__grid">
+        <div class="glass hero__card reveal">
+          <span class="eyebrow">K9 GUARD · POLICE DOG CARE SYSTEM</span>
+          <h1 class="hero__title">VELO</h1>
+          <p class="hero__sub">생체 신호 기반 경찰견 모니터링<br />및 AI 케어 시스템</p>
+          <p class="hero__desc">
+            경찰견의 생체신호를 실시간으로 분석해 위험을 조기에 감지하고,
+            스마트 하네스·AI·케어 로봇·앱을 하나로 <strong>연결(Link)</strong>해
+            조련사의 임무 수행을 지원합니다.
+          </p>
+
+          <div class="hero__actions">
+            <a href="#products" class="btn btn--primary">제품 알아보기</a>
+            <a href="#overview" class="btn btn--ghost">시스템 개요</a>
+          </div>
+
+          <!-- 실시간 더미 심박수 -->
+          <div class="hero__vitals" aria-hidden="true">
+            <div class="vital">
+              <span class="vital__label">HEART RATE</span>
+              <span class="vital__value"><span id="bpm">92</span><em>bpm</em></span>
+            </div>
+            <div class="vital__ecg">
+              <svg viewBox="0 0 240 48" preserveAspectRatio="none" aria-hidden="true">
+                <path class="ecg-line" d="M0 24 H40 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H120 l6 0 l4 -16 l6 30 l6 -32 l5 18 l4 0 H240" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 히어로 비주얼: 경찰견 사진 슬롯 -->
+        <div class="hero__visual reveal">
+          <!-- 활동적인 경찰견 사진 넣기: images/dog-hero.jpg (없으면 그린 틴트 fallback) -->
+          <figure class="photo-slot">
+            <img src="images/dog-hero.jpg" alt="고강도 임무를 수행하는 활동적인 경찰견"
+                 onerror="this.classList.add('is-missing')" />
+            <figcaption class="photo-slot__fallback">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-6 9 6v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21V13h6v8"/></svg>
+              <span>활동적인 경찰견 사진 넣기</span>
+              <small>images/dog-hero.jpg</small>
+            </figcaption>
+
+            <!-- 유리 위에 떠있는 라이브 배지 -->
+            <div class="glass live-badge">
+              <span class="dot"></span> 실시간 모니터링 · ONLINE
+            </div>
+            <div class="glass metric-chip metric-chip--a">
+              <span>체온</span><strong>38.4°C</strong>
+            </div>
+            <div class="glass metric-chip metric-chip--b">
+              <span>활동량</span><strong>HIGH</strong>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 개요 ===================== -->
+    <section class="section" id="overview">
+      <div class="section__head reveal">
+        <span class="eyebrow">OVERVIEW</span>
+        <h2 class="section__title">K9 Guard, 하나로 연결된 케어 시스템</h2>
+        <p class="section__lead">
+          <strong>VELO</strong>(Vital Emergency Link Operator)는 생체신호 측정 기술과
+          AI 케어 로봇 기술을 결합한 <strong>AI 통합 케어 플랫폼</strong>입니다.
+          측정부터 분석, 알림, 케어까지 하나의 흐름으로 이어집니다.
+        </p>
+      </div>
+
+      <div class="stats">
+        <div class="glass stat reveal">
+          <span class="stat__num">24/7</span>
+          <span class="stat__label">실시간 생체신호 모니터링</span>
+        </div>
+        <div class="glass stat reveal">
+          <span class="stat__num">5<em>+</em></span>
+          <span class="stat__label">심박·체온·호흡·활동량·위치</span>
+        </div>
+        <div class="glass stat reveal">
+          <span class="stat__num">2</span>
+          <span class="stat__label">하네스 + AI 케어 모듈 구성</span>
+        </div>
+        <div class="glass stat reveal">
+          <span class="stat__num">AI</span>
+          <span class="stat__label">위험 조기 감지 · 회복 분석</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 문제 정의 ===================== -->
+    <section class="section problem" id="problem">
+      <div class="glass problem__card reveal">
+        <span class="eyebrow eyebrow--warn">THE PROBLEM</span>
+        <h2 class="problem__title">
+          경찰견의 컨디션은 여전히<br />
+          <span class="hl">조련사의 경험과 육안</span>에 의존합니다.
+        </h2>
+        <p class="problem__text">
+          마약탐지·폭발물탐지·실종자수색 등 고강도 임무를 수행하지만,
+          피로·스트레스·건강 이상을 <strong>실시간으로 확인하기 어렵습니다.</strong>
+          이상 신호를 놓치는 순간, 경찰견의 안전과 임무 성패가 함께 흔들립니다.
+        </p>
+        <ul class="problem__list">
+          <li><span class="x">01</span> 컨디션 판단이 사람의 감각에 의존</li>
+          <li><span class="x">02</span> 피로·스트레스의 정량적 측정 부재</li>
+          <li><span class="x">03</span> 건강 이상의 실시간 조기 감지 어려움</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== 솔루션 / 제품 ===================== -->
+    <section class="section" id="products">
+      <div class="section__head reveal">
+        <span class="eyebrow">THE SOLUTION</span>
+        <h2 class="section__title">두 개의 제품, 하나의 시스템</h2>
+        <p class="section__lead">
+          생체신호 측정 기술과 AI 케어 로봇 기술을 결합한 <strong>K9 Guard</strong>는
+          두 개의 제품으로 구성됩니다.
+        </p>
+      </div>
+
+      <div class="products">
+        <!-- 제품 1 -->
+        <article class="glass product reveal">
+          <div class="product__media">
+            <span class="product__badge">PRODUCT 01</span>
+            <div class="model-slot">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="10" rx="3"/><path d="M7 8V6a5 5 0 0 1 10 0v2"/><circle cx="12" cy="13" r="2"/></svg>
+              <span>모델링 이미지 추가 예정</span>
+            </div>
+          </div>
+          <div class="product__body">
+            <h3 class="product__name">스마트 바이오 하네스</h3>
+            <p class="product__tag">Smart Bio Harness · 착용형 측정 장비</p>
+            <p class="product__desc">
+              경찰견이 착용하는 스마트 하네스로 <strong>심박수·체온·호흡수·활동량·위치</strong>를
+              실시간으로 측정하고 무선으로 전송합니다.
+            </p>
+            <ul class="chips">
+              <li>심박수</li><li>체온</li><li>호흡수</li><li>활동량</li><li>위치</li><li>무선 전송</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 제품 2 -->
+        <article class="glass product product--care reveal">
+          <div class="product__media">
+            <span class="product__badge">PRODUCT 02</span>
+            <div class="model-slot">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="12" rx="2"/><path d="M9 21h6M12 17v4"/><circle cx="9" cy="11" r="1"/><circle cx="15" cy="11" r="1"/></svg>
+              <span>모델링 이미지 추가 예정</span>
+            </div>
+          </div>
+          <div class="product__body">
+            <h3 class="product__name">AI 케어 모듈</h3>
+            <p class="product__tag">AI Care Module · 분석 &amp; 케어 로봇</p>
+            <p class="product__desc">
+              전송된 데이터를 분석해 컨디션을 관리하고, 위험 시 <strong>즉시 알림</strong>합니다.
+              휴식 제안·회복 분석을 제공하며, 전면 디스플레이로 <strong>음성·표정 상호작용</strong>을 합니다.
+            </p>
+            <ul class="chips">
+              <li>데이터 분석</li><li>위험 알림</li><li>휴식 제안</li><li>회복 분석</li><li>음성·표정 상호작용</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================== 작동 방식 / 생태계 ===================== -->
+    <section class="section flow" id="ecosystem">
+      <div class="section__head reveal">
+        <span class="eyebrow">HOW IT WORKS</span>
+        <h2 class="section__title">측정에서 케어까지, 하나로 연결(Link)</h2>
+        <p class="section__lead">
+          하네스가 측정하고, 무선으로 전송하고, AI가 분석·케어하고, 조련사가 앱으로 확인합니다.
+        </p>
+      </div>
+
+      <div class="flow__steps">
+        <div class="glass flow__step reveal">
+          <span class="flow__num">01</span>
+          <div class="flow__icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <h3>측정</h3>
+          <p>스마트 바이오 하네스가 생체신호를 실시간 수집</p>
+        </div>
+        <span class="flow__arrow" aria-hidden="true">→</span>
+        <div class="glass flow__step reveal">
+          <span class="flow__num">02</span>
+          <div class="flow__icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg></div>
+          <h3>무선 전송</h3>
+          <p>수집된 데이터를 AI 케어 모듈로 실시간 전송</p>
+        </div>
+        <span class="flow__arrow" aria-hidden="true">→</span>
+        <div class="glass flow__step reveal">
+          <span class="flow__num">03</span>
+          <div class="flow__icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="12" rx="2"/><path d="M9 21h6M12 17v4"/></svg></div>
+          <h3>AI 분석·케어</h3>
+          <p>컨디션 분석, 위험 알림, 휴식 제안·회복 관리</p>
+        </div>
+        <span class="flow__arrow" aria-hidden="true">→</span>
+        <div class="glass flow__step reveal">
+          <span class="flow__num">04</span>
+          <div class="flow__icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+          <h3>조련사 확인</h3>
+          <p>앱으로 상태를 확인하고 즉시 대응</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 차별점 ===================== -->
+    <section class="section" id="difference">
+      <div class="section__head reveal">
+        <span class="eyebrow">WHY VELO</span>
+        <h2 class="section__title">건강 측정을 넘어, 임무와 케어의 연결</h2>
+      </div>
+
+      <div class="compare">
+        <div class="glass compare__col compare__col--old reveal">
+          <span class="compare__tag">기존 제품</span>
+          <h3>측정 &amp; 추적에 집중</h3>
+          <ul>
+            <li>건강 상태 측정</li>
+            <li>위치 추적</li>
+            <li>데이터를 개별적으로 확인</li>
+          </ul>
+        </div>
+
+        <div class="compare__vs" aria-hidden="true">VS</div>
+
+        <div class="glass compare__col compare__col--new reveal">
+          <span class="compare__tag">VELO K9 Guard</span>
+          <h3>임무 수행 + 건강 관리를 하나로</h3>
+          <ul>
+            <li>생체 데이터 <strong>실시간 AI 분석</strong></li>
+            <li>위험 조기 감지 &amp; 즉시 알림</li>
+            <li>측정·분석·케어·앱을 <strong>하나의 시스템으로 연결</strong></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 활용 기술 ===================== -->
+    <section class="section" id="tech">
+      <div class="section__head reveal">
+        <span class="eyebrow">CORE TECHNOLOGY</span>
+        <h2 class="section__title">활용 기술</h2>
+        <p class="section__lead">VELO K9 Guard를 뒷받침하는 핵심 기술입니다.</p>
+      </div>
+
+      <div class="tech">
+        <article class="glass tech__card reveal">
+          <span class="tech__num">675</span>
+          <div class="tech__body">
+            <span class="tech__kicker">TECH · 675</span>
+            <h3>반려동물 돌봄 로봇 및 그 동작 방법</h3>
+            <p>AI 케어 모듈의 케어 로봇 동작을 뒷받침하는 기술.</p>
+          </div>
+        </article>
+        <article class="glass tech__card tech__card--alt reveal">
+          <span class="tech__num">52</span>
+          <div class="tech__body">
+            <span class="tech__kicker">TECH · 52</span>
+            <h3>생체 신호 측정 장치</h3>
+            <p>스마트 바이오 하네스의 실시간 생체신호 측정을 뒷받침하는 기술.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== 푸터 ===================== -->
+  <footer class="footer" id="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <div class="brand">
+          <svg class="brand__logo" viewBox="0 0 236 80" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="6" y="13" width="13" height="56" rx="2"/>
+            <path d="M25 69 L44 13 L57 13 L38 69 Z"/>
+            <rect x="64" y="13" width="13" height="56" rx="2"/>
+            <rect x="64" y="13" width="35" height="12" rx="2"/>
+            <rect x="64" y="35" width="29" height="12" rx="2"/>
+            <rect x="64" y="57" width="35" height="12" rx="2"/>
+            <rect x="108" y="13" width="13" height="56" rx="2"/>
+            <rect x="108" y="57" width="33" height="12" rx="2"/>
+            <rect x="150" y="33" width="40" height="36" rx="12" fill="none" stroke="currentColor" stroke-width="12"/>
+            <rect x="197" y="26" width="19" height="19" rx="5"/>
+            <rect x="212" y="41" width="16" height="16" rx="5"/>
+            <rect x="214" y="10" width="12" height="12" rx="4"/>
+          </svg>
+        </div>
+        <p class="footer__desc">
+          Vital Emergency Link Operator<br />
+          생체 신호 기반 경찰견 모니터링 및 AI 케어 시스템 · K9 Guard
+        </p>
+      </div>
+
+      <div class="footer__cols">
+        <div class="footer__col">
+          <h4>시스템</h4>
+          <a href="#overview">개요</a>
+          <a href="#products">제품</a>
+          <a href="#ecosystem">작동 방식</a>
+          <a href="#tech">활용 기술</a>
+        </div>
+        <div class="footer__col">
+          <h4>제품</h4>
+          <a href="#products">스마트 바이오 하네스</a>
+          <a href="#products">AI 케어 모듈</a>
+        </div>
+        <div class="footer__col">
+          <h4>팀</h4>
+          <p class="footer__team">팀 정보 자리<br /><small>Team &amp; Contact 예정</small></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 VELO · K9 Guard</span>
+      <span>생체 신호 기반 경찰견 AI 케어 시스템</span>
+    </div>
+  </footer>
+
+  <!-- JS도 내장 → 어떤 환경에서도 인터랙션 동작. (동일 내용이 script.js 에도 있음) -->
+  <script>
+  (function () {
+    'use strict';
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.documentElement.classList.add('js');
+
+    var nav = document.getElementById('nav');
+    function onScroll() {
+      if (window.scrollY > 24) nav.classList.add('is-scrolled');
+      else nav.classList.remove('is-scrolled');
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+    function showAll() { reveals.forEach(function (el) { el.classList.add('is-visible'); }); }
+    if (reduceMotion) {
+      showAll();
+    } else {
+      var revealCheck = function () {
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        reveals.forEach(function (el) {
+          if (el.classList.contains('is-visible')) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < vh * 0.9 && r.bottom > 0) el.classList.add('is-visible');
+        });
+      };
+      window.addEventListener('scroll', revealCheck, { passive: true });
+      window.addEventListener('resize', revealCheck);
+      window.addEventListener('load', revealCheck);
+      revealCheck();
+      setTimeout(revealCheck, 250);
+      setTimeout(showAll, 1600);
+    }
+
+    var pulse = document.querySelector('.brand__pulse');
+    if (pulse && !reduceMotion) {
+      try {
+        var len = pulse.getTotalLength();
+        pulse.style.strokeDasharray = len;
+        pulse.style.strokeDashoffset = len;
+        pulse.style.opacity = '1';
+        pulse.animate(
+          [{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
+          { duration: 1400, easing: 'ease-out', fill: 'forwards', delay: 300 }
+        );
+      } catch (e) { pulse.style.opacity = '1'; }
+    } else if (pulse) {
+      pulse.style.opacity = '1';
+    }
+
+    var bpmEl = document.getElementById('bpm');
+    if (bpmEl && !reduceMotion) {
+      var bpm = 92;
+      setInterval(function () {
+        bpm += Math.round((Math.random() - 0.5) * 6);
+        if (bpm < 84) bpm = 84 + Math.round(Math.random() * 3);
+        if (bpm > 104) bpm = 104 - Math.round(Math.random() * 3);
+        bpmEl.textContent = bpm;
+      }, 1400);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var id = a.getAttribute('href');
+        if (id.length < 2) return;
+        var target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
